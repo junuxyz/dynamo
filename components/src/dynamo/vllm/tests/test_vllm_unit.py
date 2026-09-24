@@ -304,13 +304,11 @@ def test_connector_to_kv_transfer_json_multi():
         _connector_to_kv_transfer_json(["kvbm", "nixl"], "kv_consumer")
     )
     assert result["kv_connector"] == "PdConnector"
+    assert result["kv_role"] == "kv_both"
     nested = result["kv_connector_extra_config"]["connectors"]
-    nested_names = [c["kv_connector"] for c in nested]
-    assert "DynamoConnector" in nested_names
-    assert "NixlConnector" in nested_names
-    assert next(c for c in nested if c["kv_connector"] == "NixlConnector") == {
-        "kv_connector": "NixlConnector",
-        "kv_role": "kv_consumer",
+    assert {c["kv_connector"]: c["kv_role"] for c in nested} == {
+        "DynamoConnector": "kv_both",
+        "NixlConnector": "kv_consumer",
     }
 
 

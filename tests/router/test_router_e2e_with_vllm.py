@@ -261,18 +261,14 @@ class VLLMProcess(ManagedEngineProcessMixin):
 
             if disaggregation_mode is not None:
                 command.extend(["--disaggregation-mode", disaggregation_mode])
+                nixl_role = (
+                    "kv_producer" if disaggregation_mode == "prefill" else "kv_consumer"
+                )
                 command.extend(
                     [
                         "--kv-transfer-config",
                         json.dumps(
-                            {
-                                "kv_connector": "NixlConnector",
-                                "kv_role": (
-                                    "kv_producer"
-                                    if disaggregation_mode == "prefill"
-                                    else "kv_consumer"
-                                ),
-                            }
+                            {"kv_connector": "NixlConnector", "kv_role": nixl_role}
                         ),
                     ]
                 )
