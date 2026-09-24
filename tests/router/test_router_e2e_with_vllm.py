@@ -264,7 +264,16 @@ class VLLMProcess(ManagedEngineProcessMixin):
                 command.extend(
                     [
                         "--kv-transfer-config",
-                        '{"kv_connector":"NixlConnector","kv_role":"kv_both"}',
+                        json.dumps(
+                            {
+                                "kv_connector": "NixlConnector",
+                                "kv_role": (
+                                    "kv_producer"
+                                    if disaggregation_mode == "prefill"
+                                    else "kv_consumer"
+                                ),
+                            }
+                        ),
                     ]
                 )
 
@@ -296,7 +305,6 @@ class VLLMProcess(ManagedEngineProcessMixin):
                         str(data_parallel_size),
                         # "--data-parallel-address", "127.0.0.1",  # Required for DP coordination
                         # "--data-parallel-rpc-port", "13345",  # RPC port for DP coordination
-                        # "--kv-transfer-config", '{"kv_connector":"NixlConnector","kv_role":"kv_both"}',  # Required for KV transfer between DP ranks
                     ]
                 )
 

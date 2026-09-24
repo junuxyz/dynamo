@@ -110,7 +110,13 @@ class DynamoWorkerProcess(ManagedProcess):
             command.extend(
                 [
                     "--kv-transfer-config",
-                    json.dumps(build_nixl_kv_transfer_config()),
+                    json.dumps(
+                        build_nixl_kv_transfer_config(
+                            "kv_producer"
+                            if mode == WorkerMode.PREFILL
+                            else "kv_consumer"
+                        )
+                    ),
                 ]
             )
 

@@ -64,6 +64,7 @@ sequenceDiagram
     Parser->>Tester: Generate results table
 ```
 
+
 ### Test Scenarios
 
 The test suite is organized around three core components: **Deployments**, **Client Load**, and **Failures**. Each scenario combines these elements to simulate fault conditions and measure system resilience.
@@ -405,7 +406,7 @@ System does NOT recover automatically
 
 #### vLLM Disaggregated Prefill Worker Resilience
 
-vLLM decode workers use `--kv-connector-role kv_both` by default, allowing them to handle both prefill and decode operations. When a prefill worker fails, decode workers automatically take over prefill requests, resulting in 100% success rate with minimal impact.
+vLLM decode workers use the NIXL `kv_consumer` role. When a prefill worker fails, decode workers run the full request locally. The locally computed KV cache does not require a remote NIXL handoff.
 
 **Expected Behavior:** Prefill worker failures don't cause request failures - this is vLLM's built-in fault tolerance, not a test issue.
 
@@ -829,5 +830,3 @@ Test Group: vllm-agg-tp-1-dp-2
 ╘═══════════════════╧═══════════╧═══════════╧══════════╧═══════════╧══════════╧═══════════╧═══════════╧════════════╛
 
 ```
-
-

@@ -385,15 +385,15 @@ cluster-owned override; do not select both.
 The files under `patches/` are examples for case-local overrides. They are not
 reusable Components. Each is a strategic merge patch that sets one framework
 hook by environment-variable name on both canonical worker roles. Select the
-file for the portable base's framework, replace its one obvious placeholder
-value, and list it under the root Kustomization's `patches:` field after
+file for the portable base's framework, replace its worker-specific placeholder
+values, and list it under the root Kustomization's `patches:` field after
 `components:`.
 
 The replacement remains a YAML string. Replace only the text inside the
 existing single quotes; for example:
 
 ```yaml
-value: &kv-transfer-config '{"key":"value"}'
+value: '{"key":"value"}'
 ```
 
 Keeping the outer quotes prevents YAML from converting the JSON text into a
@@ -403,8 +403,8 @@ All three files set the hook on both canonical worker roles:
 
 | File | Select when |
 | --- | --- |
-| `patches/vllm-kv-transfer-config.yaml` | The vLLM disaggregated base, whose workers define `KV_TRANSFER_CONFIG` with the common beta default `{"kv_connector":"NixlConnector","kv_role":"kv_both","kv_buffer_device":"cuda"}`. |
-| `patches/vllm-compute-domain-kv-transfer-config.yaml` | The vLLM ComputeDomain base uses the minimal default `{"kv_connector":"NixlConnector","kv_role":"kv_both"}`. |
+| `patches/vllm-kv-transfer-config.yaml` | The vLLM disaggregated base. Set `kv_producer` in `your-prefill-kv-transfer-config` and `kv_consumer` in `your-decode-kv-transfer-config`. |
+| `patches/vllm-compute-domain-kv-transfer-config.yaml` | The vLLM ComputeDomain base. Set the same worker-specific NIXL roles in the two placeholders. |
 | `patches/sglang-nixl-backend.yaml` | The SGLang disaggregated base, whose workers define `SGLANG_DISAGGREGATION_NIXL_BACKEND=UCX`. |
 
 For example:
